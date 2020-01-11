@@ -1,0 +1,1 @@
+g++  -std=c++11 srcs/*.cpp -pthread -I SDL/includes -L SDL/lib -lSDL2 -lSDL2_image && ./a.out
