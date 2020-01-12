@@ -19,6 +19,7 @@ SDL_Texture* Texture::LoadTexture(const char *file)
 	SDL_Texture	*texture;
 	
 	tmpSurface = IMG_Load(file);
+
 	if (tmpSurface == NULL){
 		cerr << "Error Loading texture !" << IMG_GetError() << "\n";
 		return NULL;

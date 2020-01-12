@@ -47,9 +47,8 @@ class	Game
 		static SDL_Renderer	*renderer;
 		static SDL_Event event;
 		static std::vector<ColliderComponent *> colliders;
-
-		static void addTile(float x, float y,  int h, int  w, int id, const char* path, const char *tag , int group, int coll);
-
+		static std::vector<pair<int, SDL_Texture* >> GlobalTexture;
+		static void addTile(int srcX, int srcY, int x, int y, const char *path);
 
 	private	:
 		bool 			_isRunning;

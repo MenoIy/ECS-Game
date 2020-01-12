@@ -25,29 +25,23 @@ int	Map::loadMap(const char *filename)
 	ifstream	stream(filename);
 	string line;
 
-
 	_width = 0;
 	_height = 0;
 	char c;
-	const char *tag;
-
+	//133
 	if (!stream.is_open()){
 		cerr << "Error can't read map file .\n";
 		return(1);
 	}
 	getline(stream , line);
 	sscanf(line.c_str(), "%d %d", &_height, &_width);
-	while (getline(stream, line))
-	{
-		if (line.empty())
-			break;
-		labels tile;
-		sscanf(line.c_str(), "%d %d %s %s", &(tile.collider) , &(tile.group), (tile.tag), (tile.path));
-		_tiles.push_back(tile);
-	}
-
-	_tab = vector<vector <int> >(_height , vector<int>(_width));
-	int	value;
+	getline(stream, line);
+	char path1[100];
+	sscanf(line.c_str(), "%s", path1);
+	char path2[100];
+	getline(stream, line);
+	sscanf(line.c_str(), "%s", path2);
+	int	srcX, srcY, value;
 
 	for (int i = 0; i < _height; i++){
 		for (int j = 0; j < _width; j++){
@@ -56,10 +50,18 @@ int	Map::loadMap(const char *filename)
 			{
 				if (!isdigit(c))
 					break;
-				value += value * 10 + (c - '0');
+				value = value * 10 + (c - '0');
 			}
-			_tab[i][j] = value;
-			Game::addTile(j * 32.0, i * 32.0, 32, 32, value , _tiles[value].path, _tiles[value].tag, _tiles[value].group , _tiles[value].collider);
+			if (value + 577 >= 1641){
+				srcY = (value + 577  - 1641) / 8;
+				srcX = (value + 577 - 1641) % 8;
+				Game::addTile(srcX * 32, srcY * 32 , j * 32 , i * 32 , path2);
+			}
+			else{
+				srcY = (value / 8);
+				srcX = value % 8;
+				Game::addTile(srcX * 32, srcY * 32 , j * 32 , i * 32 , path1);
+			}
 		}
 	}
 	stream.close();

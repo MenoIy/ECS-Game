@@ -166,7 +166,7 @@ class Manager
 			return(_groupedEntities[mGroup]);
 		}
 
-		Entity& addEntity(bool onelife = false)
+		Entity& addEntity()
 		{
 			Entity* e = new Entity(*this);
 			std::unique_ptr<Entity> uPtr{ e };

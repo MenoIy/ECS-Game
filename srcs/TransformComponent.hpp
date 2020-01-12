@@ -27,8 +27,8 @@ class TransformComponent : public Component
 
 		TransformComponent()
 		{
-			position.x = 0.0;
-			position.y = 0.0;
+			position.x = 416.0;
+			position.y = 320.0;
 		}
 
 		TransformComponent(float x, float y)

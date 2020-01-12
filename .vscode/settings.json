@@ -64,6 +64,8 @@
         "hashtable": "cpp",
         "thread": "cpp",
         "__functional_base_03": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "__tree": "cpp",
+        "numeric": "cpp"
     }
 }

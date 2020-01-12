@@ -25,6 +25,7 @@ std::vector<ColliderComponent *> Game::colliders;
 Map map_ = Map();
 Manager manager;
 auto& player(manager.addEntity());
+std::vector<pair<int, SDL_Texture* >> Game::GlobalTexture;
 
 Game::Game()
 {}
@@ -33,15 +34,15 @@ Game::~Game()
 {}
 
 
+auto &tiles = manager.getGroup(groupMap);
+auto &players = manager.getGroup(groupPlayers);
+auto &coll = manager.getGroup(groupColliders);
 
-void Game::addTile(float x, float y, int h, int w, int id, const char* path, const char *tag, int group, int coll)
+void Game::addTile(int srcX, int srcY, int x, int y, const char *path)
 {
-	auto& tile(manager.addEntity(true));
-	tile.addComponent<TileComponent>(x, y, h, w, id, path);
-	if (coll){
-		tile.addComponent<ColliderComponent>(tag);
-	}
-	tile.addGroup(group);
+	auto& tile(manager.addEntity());
+	tile.addComponent<TileComponent>(srcX, srcY, x, y, path);
+	tile.addGroup(groupMap);
 }
 
 
@@ -74,7 +75,7 @@ int	Game::init(const char *title, int xpos, int ypos, int width, int height, boo
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
 
-	if (map_.loadMap("text.x"))
+	if (map_.loadMap("final.map"))
 		return (1);
 	return (0);
 }
@@ -91,15 +92,18 @@ void Game::handleEvents()
 	}
 }
 
-auto &tiles = manager.getGroup(groupMap);
-auto &players = manager.getGroup(groupPlayers);
-auto &coll = manager.getGroup(groupColliders);
 
 void Game::update()
 {
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
 	manager.refresh();
 	manager.update();
+	Vector2D playerVelocity = player.getComponent<TransformComponent>().velocity;
+	int speed = player.getComponent<TransformComponent>().speed;
+	for (auto& t :  tiles){
+		t->getComponent<TileComponent>().destRect.x -= playerVelocity.x * speed;
+		t->getComponent<TileComponent>().destRect.y -= playerVelocity.y * speed;
+	}
 	for (auto cc : colliders){
 		if (Collision::AABB(player.getComponent<ColliderComponent>(), *cc))
 		{
