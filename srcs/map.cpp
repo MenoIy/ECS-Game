@@ -12,57 +12,89 @@
 
 #include "map.hpp"
 
-Map::Map()
-{
-}
 
-Map::~Map()
-{
-}
 
-int	Map::loadMap(const char *filename)
+static int	readMap(char *file, int group, int height, int width, vector <filedata> resources)
 {
-	ifstream	stream(filename);
-	string line;
-
-	_width = 0;
-	_height = 0;
+	ifstream stream(file);
+	int value;
 	char c;
-	//133
-	if (!stream.is_open()){
-		cerr << "Error can't read map file .\n";
-		return(1);
-	}
-	getline(stream , line);
-	sscanf(line.c_str(), "%d %d", &_height, &_width);
-	getline(stream, line);
-	char path1[100];
-	sscanf(line.c_str(), "%s", path1);
-	char path2[100];
-	getline(stream, line);
-	sscanf(line.c_str(), "%s", path2);
-	int	srcX, srcY, value;
-
-	for (int i = 0; i < _height; i++){
-		for (int j = 0; j < _width; j++){
+	int cap, div;
+	char *path;
+	int srcX, srcY;
+	
+	for(int i = 0; i < height ; i++){
+		for (int j = 0; j < width; j++){
 			value = 0;
-			while (stream.get(c))
+			while(stream.get(c))
 			{
 				if (!isdigit(c))
 					break;
 				value = value * 10 + (c - '0');
 			}
-			if (value + 577 >= 1641){
-				srcY = (value + 577  - 1641) / 8;
-				srcX = (value + 577 - 1641) % 8;
-				Game::addTile(srcX * 32, srcY * 32 , j * 32 , i * 32 , path2);
-			}
-			else{
-				srcY = (value / 8);
-				srcX = value % 8;
-				Game::addTile(srcX * 32, srcY * 32 , j * 32 , i * 32 , path1);
+			if (value != 0){
+				for (auto& e : resources){
+					if (value >= e.range){
+						path = e.file;
+						div = e.div;
+						cap = e.range;
+						break;
+					}
+				}
+				srcY = (value - cap) / div;
+				srcX = (value - cap) % div;
+				Game::addTile(srcX * 32, srcY * 32 , j * 32 , i * 32 ,group, value ,path);
 			}
 		}
+	}
+	stream.close();
+	return (0);
+}
+
+static bool sortinrev(const filedata &a, const filedata &b) 
+{ 
+       return (a.range > b.range); 
+} 
+
+int Map::loadMap(const char *filename)
+{
+	ifstream	stream(filename);
+	string line;
+	vector < filedata > resources;
+
+	int width = 0;
+	int height = 0;
+	int count = 0;
+	if (!stream.is_open()){
+		cerr << "Error can't read map file .\n";
+		return(1);
+	}
+
+	getline(stream , line);	
+	sscanf(line.c_str(), "%d %d %d", &height, &width, &count);
+	while (getline(stream, line))
+	{
+		if (line.empty())
+			break;
+		filedata data;
+		data.file = (char *)malloc(sizeof(char ) * 100);
+		sscanf(line.c_str(), "%d %d %s", &(data.range), &(data.div), data.file);
+		resources.emplace_back(data);
+	}
+	sort(resources.begin(), resources.end(), sortinrev);
+
+	thread th[count];
+	char file[count][100];
+	for(int i = 0; i < count  && getline(stream , line) ; i++){
+		int group;
+		sscanf(line.c_str(), "%d %s", &group, file[i]);
+		th[i] = thread(readMap, file[i], group , height, width, resources);
+	}
+	for (int i = 0; i < count ; i++){
+		th[i].join();
+	}
+	for (auto&e : resources){
+		free(e.file);
 	}
 	stream.close();
 	cout << "Loading map done\n";

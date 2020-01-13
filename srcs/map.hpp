@@ -28,17 +28,21 @@
 
 using namespace std;
 
+struct filedata
+{
+	char *file;
+	int range;
+	int div;
+};
+
 
 class	Map
 {
 	public	:
 		Map();
 		~Map();
-		int	loadMap(const char *filename);
-
-	private	:
-		int		_height;
-		int		_width;
+		static int	loadMap(const char *filename);
+		//static int	readMap(int heigh, int width, vector <tilemap> resourcs);
 };
 
 

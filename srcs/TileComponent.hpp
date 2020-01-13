@@ -25,22 +25,25 @@ class TileComponent : public Component
     public :
         SDL_Texture*         texture;
         SDL_Rect        srcRect, destRect;
+        Vector2D    position;
 
         TileComponent() = default;
 
-        TileComponent(int srcX, int srcY, int xpos, int ypos, const char *path)
+        TileComponent(int srcX, int srcY, int xpos, int ypos, const char *path, int id)
         {
             bool s =  true;
             for (auto e : Game::GlobalTexture){
-                if (e.first == srcX / 32  + (srcY  / 32) * 8){
+                if (e.first == id){
                         texture = e.second;
                         s = false;
                     }
             }
             if (s){
                 texture = Texture::LoadTexture(path);
-                Game::GlobalTexture.emplace_back(std::make_pair(srcX / 32  + (srcY  / 32) * 8, texture));
+                Game::GlobalTexture.emplace_back(std::make_pair(id, texture));
             }
+            position.x = xpos;
+            position.y = ypos;
             srcRect.x = srcX;
             srcRect.y = srcY;
             srcRect.w = srcRect.h = 32;
@@ -52,6 +55,12 @@ class TileComponent : public Component
         ~TileComponent()
         {
             SDL_DestroyTexture(texture);
+        }
+
+        void update() override
+        {
+             destRect.x = position.x - Game::camera.xpos;
+             destRect.y = position.y - Game::camera.ypos;
         }
 
         void draw() override

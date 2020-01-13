@@ -21,7 +21,7 @@ int main()
 	unsigned int	frameStart;
 	int				frameTime;
 
-	if (game->init("testing",  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 832, 640, false)){
+	if (game->init("testing",  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, false)){
 		cerr << "Failed to start the game.\n";
 		return (0);
 	}

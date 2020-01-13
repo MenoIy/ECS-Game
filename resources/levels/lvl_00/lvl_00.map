@@ -1,0 +1,8 @@
+60 60 3
+577 8 resources/levels/lvl_00/textures/base.png
+1641 8 resources/levels/lvl_00/textures/grass.png
+2169 64 resources/levels/lvl_00/textures/water.png
+
+0 resources/levels/lvl_00/map/layer_00.map
+1 resources/levels/lvl_00/map/layer_01.map
+2 resources/levels/lvl_00/map/layer_02.map

@@ -11,21 +11,16 @@
 /* ************************************************************************** */
 
 #include "game.hpp"
-#include "texture.hpp"
-#include "map.hpp"
-#include "ECL.hpp"
 #include "components.hpp"
 #include "collision.hpp"
 
-SDL_Texture *player_texture;
-SDL_Rect srcRect, destRect;
 SDL_Renderer* Game::renderer = nullptr; 
 SDL_Event	Game::event;
-std::vector<ColliderComponent *> Game::colliders;
-Map map_ = Map();
 Manager manager;
-auto& player(manager.addEntity());
+std::vector<ColliderComponent *> Game::colliders;
 std::vector<pair<int, SDL_Texture* >> Game::GlobalTexture;
+Camera Game::camera(WIDTH, HEIGHT);
+auto& player(manager.addEntity());
 
 Game::Game()
 {}
@@ -36,13 +31,16 @@ Game::~Game()
 
 auto &tiles = manager.getGroup(groupMap);
 auto &players = manager.getGroup(groupPlayers);
-auto &coll = manager.getGroup(groupColliders);
+auto &build = manager.getGroup(groupBuilding);
+auto &water = manager.getGroup(groupWater);
 
-void Game::addTile(int srcX, int srcY, int x, int y, const char *path)
+void Game::addTile(int srcX, int srcY, int x, int y, int group, int id, const char *path)
 {
 	auto& tile(manager.addEntity());
-	tile.addComponent<TileComponent>(srcX, srcY, x, y, path);
-	tile.addGroup(groupMap);
+	tile.addComponent<TileComponent>(srcX, srcY, x, y, path, id);
+	tile.addGroup(group);
+	if (group == groupColliders)
+		tile.addComponent<ColliderComponent>("tag");
 }
 
 
@@ -69,13 +67,13 @@ int	Game::init(const char *title, int xpos, int ypos, int width, int height, boo
 	SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
 	_isRunning = true;
 
-	player.addComponent<TransformComponent>(20, 100, 32, 32, 1);
+	player.addComponent<TransformComponent>(416, 360, 32, 32, 1);
 	player.addComponent<SpriteComponent>("resources/textures/player/player.png", true);
 	player.addComponent<KeyBoardController>();
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
 
-	if (map_.loadMap("final.map"))
+	if (Map::loadMap("resources/levels/lvl_00/lvl_00.map"))
 		return (1);
 	return (0);
 }
@@ -92,18 +90,14 @@ void Game::handleEvents()
 	}
 }
 
-
 void Game::update()
 {
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
 	manager.refresh();
+	camera.update(playerPos);
 	manager.update();
-	Vector2D playerVelocity = player.getComponent<TransformComponent>().velocity;
-	int speed = player.getComponent<TransformComponent>().speed;
-	for (auto& t :  tiles){
-		t->getComponent<TileComponent>().destRect.x -= playerVelocity.x * speed;
-		t->getComponent<TileComponent>().destRect.y -= playerVelocity.y * speed;
-	}
+
+
 	for (auto cc : colliders){
 		if (Collision::AABB(player.getComponent<ColliderComponent>(), *cc))
 		{
@@ -120,9 +114,12 @@ void Game::render()
 	for (auto& e : tiles){
 		e->draw();
 	}
-	for (auto& e : coll){
+	for (auto& e : water){
 		e->draw();
-	}	
+	}
+	for (auto& e : build){
+		e->draw();
+	}
 	for (auto& e : players){
 		e->draw();
 	}

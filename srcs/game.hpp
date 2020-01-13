@@ -13,10 +13,18 @@
 #ifndef GAME_HPP
 # define GAME_HPP
 
+#include "texture.hpp"
 #include "SDL.h"
 #include "SDL_image.h"
+#include "map.hpp"
+#include "ECL.hpp"
 #include <iostream>
 #include <vector>
+#include "camera.hpp"
+#define  HEIGHT 640
+#define WIDTH 832
+
+
 
 #define FPS 60
 
@@ -27,6 +35,8 @@ class ColliderComponent;
 enum groupLabels : std::size_t
 {
 	groupMap,
+	groupBuilding,
+	groupWater,
 	groupColliders,
 	groupEnemis,
 	groupBonus,
@@ -44,11 +54,12 @@ class	Game
 		void	render();
 		void	clean();
 		bool	running(){ return _isRunning; }
+		static Camera camera;
 		static SDL_Renderer	*renderer;
 		static SDL_Event event;
 		static std::vector<ColliderComponent *> colliders;
 		static std::vector<pair<int, SDL_Texture* >> GlobalTexture;
-		static void addTile(int srcX, int srcY, int x, int y, const char *path);
+		static void addTile(int srcX, int srcY, int x, int y,int group, int id, const char *path);
 
 	private	:
 		bool 			_isRunning;

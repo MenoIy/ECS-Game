@@ -6,7 +6,7 @@
 /*   By: kdaou <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 16:24:23 by kdaou             #+#    #+#             */
-/*   Updated: 2020/01/12 16:34:53 by kdaou            ###   ########.fr       */
+/*   Updated: 2020/01/13 20:30:56 by kdaou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ using namespace std;
 
 int main()
 {
-	ifstream	stream("lvl01.map");
+	ifstream	stream("test");
 	char c;
 	int v;
 
@@ -37,7 +37,7 @@ int main()
 					break;
 				v = v * 10 + (c - '0');
 			}
-			cout << v - 577;
+			cout << v;
 			if (j != 59)
 				cout << " ";
 		}

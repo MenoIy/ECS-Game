@@ -1,26 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   components.hpp                                     :+:      :+:    :+:   */
+/*   camera.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kdaou <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/08 18:18:11 by kdaou             #+#    #+#             */
-/*   Updated: 2020/01/08 18:23:21 by kdaou            ###   ########.fr       */
+/*   Created: 2020/01/13 11:40:37 by kdaou             #+#    #+#             */
+/*   Updated: 2020/01/13 11:40:40 by kdaou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COMPONENTS_HPP
-#define COMPONENTS_HPP
+#ifndef CAMERA_HPP
+#define CAMERA_HPP
 
-#include "game.hpp"
-#include "TransformComponent.hpp"
-#include "SpriteComponent.hpp"
-#include "keyboardController.hpp"
-#include "ColliderComponent.hpp"
-#include "TileComponent.hpp"
+#include "vector2d.hpp"
 
 
+class Camera
+{
+
+    public :
+        int xpos;
+        int ypos;
+        int width;
+        int height;
+        Camera(int width, int height);
+        ~Camera();
+        void update(const Vector2D& position);
+};
 
 
-#endif
+#endif 

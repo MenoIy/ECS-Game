@@ -79,8 +79,8 @@ class SpriteComponent : public Component
 			}
 			_srcRect.y = animateIndex * _transform->height;
 
-			_destRect.x = (int)_transform->position.x;
-			_destRect.y = (int)_transform->position.y;
+			_destRect.x = (int)_transform->position.x - Game::camera.xpos;
+			_destRect.y = (int)_transform->position.y - Game::camera.ypos;
 			_destRect.w = _transform->width * _transform->scale;
 			_destRect.h = _transform->height * _transform->scale;	
 		}
