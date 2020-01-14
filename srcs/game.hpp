@@ -60,6 +60,7 @@ class	Game
 		static std::vector<ColliderComponent *> colliders;
 		static std::vector<pair<int, SDL_Texture* >> GlobalTexture;
 		static void addTile(int srcX, int srcY, int x, int y,int group, int id, const char *path);
+		static void addCollider(int x, int y, int width, int height);
 
 	private	:
 		bool 			_isRunning;

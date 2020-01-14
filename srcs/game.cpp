@@ -19,6 +19,7 @@ SDL_Event	Game::event;
 Manager manager;
 std::vector<ColliderComponent *> Game::colliders;
 std::vector<pair<int, SDL_Texture* >> Game::GlobalTexture;
+Map gameMap = Map();
 Camera Game::camera(WIDTH, HEIGHT);
 auto& player(manager.addEntity());
 
@@ -28,19 +29,18 @@ Game::Game()
 Game::~Game()
 {}
 
-
-auto &tiles = manager.getGroup(groupMap);
-auto &players = manager.getGroup(groupPlayers);
-auto &build = manager.getGroup(groupBuilding);
-auto &water = manager.getGroup(groupWater);
-
 void Game::addTile(int srcX, int srcY, int x, int y, int group, int id, const char *path)
 {
 	auto& tile(manager.addEntity());
 	tile.addComponent<TileComponent>(srcX, srcY, x, y, path, id);
 	tile.addGroup(group);
-	if (group == groupColliders)
-		tile.addComponent<ColliderComponent>("tag");
+}
+
+void Game::addCollider(int x, int y, int width, int height)
+{
+	auto& collider(manager.addEntity());
+	collider.addComponent<TransformComponent>(x, y,height, width);
+	collider.addComponent<ColliderComponent>("tag");
 }
 
 
@@ -73,8 +73,9 @@ int	Game::init(const char *title, int xpos, int ypos, int width, int height, boo
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
 
-	if (Map::loadMap("resources/levels/lvl_00/lvl_00.map"))
+	if (gameMap.loadMap("resources/levels/lvl_00/lvl_00.map"))
 		return (1);
+	camera.init(gameMap.height, gameMap.width, gameMap.gridSize);
 	return (0);
 }
 
@@ -94,7 +95,6 @@ void Game::update()
 {
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
 	manager.refresh();
-	camera.update(playerPos);
 	manager.update();
 
 
@@ -106,22 +106,18 @@ void Game::update()
 			}
 		}
 	}
+	camera.update(player.getComponent<TransformComponent>().position);
 }
 
 void Game::render()
 {
 	SDL_RenderClear(renderer);
-	for (auto& e : tiles){
-		e->draw();
-	}
-	for (auto& e : water){
-		e->draw();
-	}
-	for (auto& e : build){
-		e->draw();
-	}
-	for (auto& e : players){
-		e->draw();
+	for (int i = 0; i < 7; i++)
+	{
+		auto& tmp = manager.getGroup(i);
+		for (auto& e : tmp){
+			e->draw();
+		}
 	}
 	SDL_RenderPresent(renderer);
 }

@@ -37,7 +37,7 @@ class TransformComponent : public Component
 			position.y = y;
 		}
 
-		TransformComponent(float x, float y, int h, int w, int s)
+		TransformComponent(float x, float y, int h, int w, int s = 1)
 		{
 			position.x = x;
 			position.y = y;
@@ -54,8 +54,8 @@ class TransformComponent : public Component
 
 		void update() override
 		{
-			position.x += velocity.x * speed;
-			position.y += velocity.y * speed;
+			position.x += static_cast<int>(velocity.x * speed);
+			position.y += static_cast<int>(velocity.y * speed);
 		}
 };
 

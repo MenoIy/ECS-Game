@@ -18,16 +18,26 @@ Camera::Camera(int _width, int _height)
     ypos = 0;
     width = _width;
     height = _height;
+    maxHeight = 0;
+    maxWidth = 0;
 }
 
 Camera::~Camera()
 {}
 
 
+void Camera::init(int h, int w, int gs)
+{
+    maxHeight = h * gs;
+    maxWidth = w * gs;
+}
+
 void Camera::update(const Vector2D& position)
 {
-    xpos = static_cast<int>(position.x) - (width / 2);
-    ypos = static_cast<int>(position.y) - (height / 2);
-    xpos = xpos < 0 ? 0 : xpos > width ? width : xpos;
-    ypos = ypos < 0 ? 0 : ypos > height ? height : ypos;
+    xpos = static_cast<int>(position.x) - width / 2;
+    ypos = static_cast<int>(position.y) - height / 2;
+    xpos = xpos < 0 ? 0 : xpos ;
+    ypos = ypos < 0 ? 0 : ypos ;
+    xpos = xpos + width > maxWidth ?  maxWidth - width : xpos ;
+    ypos = ypos + height > maxHeight ? maxHeight - height : ypos ;
 }

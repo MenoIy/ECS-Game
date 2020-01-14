@@ -24,8 +24,11 @@ class Camera
         int ypos;
         int width;
         int height;
+        int maxHeight;
+        int maxWidth;
         Camera(int width, int height);
         ~Camera();
+        void init(int h, int w, int gs);
         void update(const Vector2D& position);
 };
 

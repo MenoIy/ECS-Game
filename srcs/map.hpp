@@ -39,10 +39,14 @@ struct filedata
 class	Map
 {
 	public	:
-		Map();
-		~Map();
-		static int	loadMap(const char *filename);
-		//static int	readMap(int heigh, int width, vector <tilemap> resourcs);
+		Map()
+		{}
+		~Map()
+		{}
+		int height = 0;
+		int width = 0;
+		int gridSize = 0;
+		int	loadMap(const char *filename);
 };
 
 

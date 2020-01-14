@@ -14,7 +14,7 @@
 
 
 
-static int	readMap(char *file, int group, int height, int width, vector <filedata> resources)
+static int	readMap(char *file, int group, int height, int width,int gridSize , vector <filedata> resources)
 {
 	ifstream stream(file);
 	int value;
@@ -41,9 +41,14 @@ static int	readMap(char *file, int group, int height, int width, vector <filedat
 						break;
 					}
 				}
-				srcY = (value - cap) / div;
-				srcX = (value - cap) % div;
-				Game::addTile(srcX * 32, srcY * 32 , j * 32 , i * 32 ,group, value ,path);
+				if (group < 100){
+					srcY = (value - cap) / div;
+					srcX = (value - cap) % div;
+					Game::addTile(srcX * gridSize, srcY * gridSize , j * gridSize , i * gridSize ,group, value ,path);
+				}
+				else{
+					Game::addCollider(j * gridSize, i * gridSize, gridSize, gridSize);
+				}
 			}
 		}
 	}
@@ -62,8 +67,6 @@ int Map::loadMap(const char *filename)
 	string line;
 	vector < filedata > resources;
 
-	int width = 0;
-	int height = 0;
 	int count = 0;
 	if (!stream.is_open()){
 		cerr << "Error can't read map file .\n";
@@ -71,7 +74,7 @@ int Map::loadMap(const char *filename)
 	}
 
 	getline(stream , line);	
-	sscanf(line.c_str(), "%d %d %d", &height, &width, &count);
+	sscanf(line.c_str(), "%d %d %d %d", &height, &width, &gridSize , &count);
 	while (getline(stream, line))
 	{
 		if (line.empty())
@@ -88,7 +91,7 @@ int Map::loadMap(const char *filename)
 	for(int i = 0; i < count  && getline(stream , line) ; i++){
 		int group;
 		sscanf(line.c_str(), "%d %s", &group, file[i]);
-		th[i] = thread(readMap, file[i], group , height, width, resources);
+		th[i] = thread(readMap, file[i], group , height, width, gridSize, resources);
 	}
 	for (int i = 0; i < count ; i++){
 		th[i].join();
